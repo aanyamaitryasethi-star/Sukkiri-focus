@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sukkiri: a calm study planner</title>
+<meta name="description" content="Dump everything on your mind, get a calm plan for today, focus in short sessions, and light up your own night sky.">
+<meta name="theme-color" content="#070D1F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sukkiri">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="Sukkiri">
+<meta property="og:description" content="A calm study planner. Brain dump, plan, focus, and light up your night sky.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Knewave&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- The bar at the top of every page -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" width="30" height="30" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <rect width="100" height="100" rx="24" fill="#0F1A33"></rect>
+        <path d="M14 54C14 30 42 28 42 48C42 66 20 64 24 46C28 28 56 30 54 52C53 60 58 62 66 62H86" stroke="#BFD0F0" stroke-width="9" stroke-linecap="round"></path>
+        <path d="M60 62H86" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"></path>
+      </svg>
+      <span>Sukkiri</span>
+      <button id="streak-chip" class="streak-chip" type="button" hidden>
+        <svg width="18" height="20" viewBox="-1 -1.1 2 2.2" fill="none" aria-hidden="true"><path id="streak-icon" stroke="#7FA6FF" stroke-width=".14" stroke-linejoin="round"></path></svg>
+        <span id="streak-count">0</span>
+      </button>
+    </div>
+    <button class="btn btn--primary btn--small nav-dump" id="nav-dump" type="button">+ Brain dump</button>
+  </header>
+
+  <main>
+
+    <!-- PAGE 1: Brain dump (review.js) -->
+    <section id="dump-page" class="page page--narrow">
+      <div class="intro">
+        <h1>Get it all out of your head.</h1>
+        <p class="lead">Homework, worries, ideas. Any order, any mess.</p>
+      </div>
+
+      <div class="dump-box">
+        <label for="dump-input">Your brain dump</label>
+        <textarea id="dump-input" placeholder="math hw due friday, study for bio quiz&#10;remember to email ms. lee about the essay&#10;maybe start a youtube channel"></textarea>
+        <div class="dump-meta">
+          <span class="with-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+            Saved on this device
+          </span>
+          <span id="line-count">0 lines</span>
+        </div>
+      </div>
+
+      <p id="dump-hint" class="hint" hidden></p>
+
+      <div class="dump-actions">
+        <button id="sort-btn" class="btn btn--primary btn--big" type="button" disabled>
+          Clear my head
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 2: Review and organize (review.js) -->
+    <section id="review-page" class="page" hidden>
+      <div class="intro">
+        <h1>Here's what we found.</h1>
+        <p class="lead">Tap when it's due and how long it takes. Anything left blank goes on today.</p>
+        <div id="sort-note" class="hint sort-note" hidden>
+          <span id="sort-note-text"></span>
+          <button id="sort-retry" class="btn btn--primary btn--small" type="button">Try again</button>
+        </div>
+      </div>
+
+      <div class="review-layout">
+        <div class="review-list-wrap">
+          <div class="list-tools">
+            <button id="back-btn" class="btn btn--ghost btn--small" type="button">← Edit brain dump</button>
+          </div>
+          <div id="item-list" class="item-list"></div>
+        </div>
+        <aside id="question-panel" class="question-panel" aria-live="polite"></aside>
+      </div>
+
+      <div class="summary-bar">
+        <div class="summary-text">
+          <strong id="review-count">0 of 0</strong>
+          <span id="review-breakdown"></span>
+        </div>
+        <button id="save-btn" class="btn btn--primary" type="button" disabled>Save and plan my day</button>
+        <div id="save-choice" class="save-choice" hidden>
+          <span id="save-choice-text"></span>
+          <button id="keep-old-btn" class="btn btn--ghost" type="button">Keep them too</button>
+          <button id="fresh-btn" class="btn btn--primary" type="button">Start fresh</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: Plan (plan.js) -->
+    <section id="plan-page" class="page" hidden>
+      <div class="intro">
+        <h1 id="plan-heading">Your day, sorted.</h1>
+      </div>
+      <div id="plan-content" class="page-body"></div>
+    </section>
+
+    <!-- PAGE 4: Focus (focus.js) -->
+    <section id="focus-page" class="page page--narrow" hidden>
+      <div class="intro intro--center">
+        <h1>Just this one thing.</h1>
+      </div>
+      <div id="focus-content"></div>
+    </section>
+
+    <!-- PAGE 5: My tasks (tasks.js) -->
+    <section id="tasks-page" class="page page--narrow" hidden>
+      <div class="intro">
+        <button class="btn btn--ghost btn--small back-link" id="tasks-back" type="button">← Today</button>
+        <h1>All tasks.</h1>
+      </div>
+      <div id="tasks-content" class="page-body"></div>
+    </section>
+
+    <!-- PAGE 7: Your sky (sky.js) -->
+    <section id="strings-page" class="page page--narrow" hidden>
+      <div class="intro">
+        <h1>Your sky.</h1>
+      </div>
+      <div id="strings-content" class="page-body"></div>
+      <div id="progress-content" class="page-body"></div>
+    </section>
+
+
+  </main>
+
+
+  <!-- The bar at the bottom of every page -->
+  <nav class="dock" aria-label="Pages">
+    <div class="dock-inner">
+      <div class="dock-pages">
+        <button class="dock-btn" id="nav-plan" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg><span class="dock-label">Today</span></button>
+        <button class="dock-btn" id="nav-focus" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M10 2h4"></path></svg><span class="dock-label">Focus</span></button>
+        <button class="dock-btn" id="nav-strings" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.6 5.1 5.4.1-4.3 3.2 1.6 5.1-4.3-3.1-4.3 3.1 1.6-5.1L5 8.7l5.4-.1z"></path><path d="M19 17.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"></path></svg><span class="dock-label">Sky</span><span id="strings-new" class="dock-new" hidden></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Things that float over every page -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+  <div id="flash" class="flash" aria-hidden="true" hidden></div>
+  <div id="string" class="string" role="dialog" aria-modal="true" aria-labelledby="string-msg" hidden>
+    <button id="string-stage" class="string-stage" type="button"><canvas id="string-canvas" aria-hidden="true"></canvas></button>
+    <canvas id="sky-moment" class="sky-canvas sky-canvas--moment" data-scene="moment" aria-hidden="true" hidden></canvas>
+    <p id="string-msg" class="string-msg"></p>
+    <p id="string-sub" class="string-sub"></p>
+    <div id="report-card" class="report-card" hidden>
+      <span class="report-stamp" aria-hidden="true">A+</span>
+      <div class="report-rows">
+        <span class="report-head">Today's report card</span>
+        <span class="report-row"><span>Tasks done</span><strong id="card-tasks">0</strong></span>
+        <span class="report-row"><span>Focus time</span><strong id="card-focus">0 min</strong></span>
+        <span class="report-row"><span>Your title</span><strong id="card-title">Fresh start</strong></span>
+      </div>
+    </div>
+    <p id="sky-note" class="sky-note" hidden></p>
+    <button id="string-close" class="btn btn--ghost" type="button">Later</button>
+  </div>
+
+  <!-- The code, one file per job. Order matters: main.js goes last. -->
+  <script src="parser.js"></script>   <!-- simple sorting rules -->
+  <script src="data.js"></script>     <!-- saved tasks, dates, times -->
+  <script src="ui.js"></script>       <!-- smart sorting, toasts, confetti, finishing tasks -->
+  <script src="string.js"></script>   <!-- the string, your flame, the streak -->
+  <script src="sky.js"></script>      <!-- your stars, constellations and the monthly quest -->
+  <script src="review.js"></script>   <!-- pages 1 and 2 -->
+  <script src="plan.js"></script>     <!-- page 3 -->
+  <script src="focus.js"></script>    <!-- page 4 -->
+  <script src="reminders.js"></script> <!-- nudges and calendar alerts -->
+  <script src="tasks.js"></script>    <!-- page 5 -->
+  <script src="progress.js"></script> <!-- page 6 -->
+  <script src="intro.js"></script>    <!-- the first-time intro to your sky -->
+  <script src="main.js"></script>     <!-- switching pages, starting up -->
+<script>
+// Offline support: after the first visit the app opens without internet.
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+}
+</script>
+</body>
+</html>
